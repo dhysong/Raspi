@@ -16,6 +16,7 @@ function CharLCD(pin_rs, pin_e, pins_db){
     pin_rs = typeof pin_rs !== 'undefined' ? pin_rs : 25;
     pin_e = typeof pin_e !== 'undefined' ? pin_e : 24;
     pins_db = typeof pins_db !== 'undefined' ? pins_db : [23, 17, 21, 22];
+	
 	// commands
     var LCD_CLEARDISPLAY = 0x01;
     var LCD_RETURNHOME = 0x02;
@@ -25,6 +26,15 @@ function CharLCD(pin_rs, pin_e, pins_db){
     var LCD_FUNCTIONSET = 0x20;
     var LCD_SETCGRAMADDR = 0x40;
     var LCD_SETDDRAMADDR = 0x80;
+	
+	write4bits(0x01); 
+	write4bits(0x02); 
+	write4bits(0x04); 
+	write4bits(0x08); 
+	write4bits(0x10); 
+	write4bits(0x20); 
+	write4bits(0x40); 
+	write4bits(0x80); 
      
     // flags for display entry mode
     var LCD_ENTRYRIGHT = 0x00;
@@ -98,7 +108,7 @@ function CharLCD(pin_rs, pin_e, pins_db){
 	displayfunction |= LCD_2LINE;
 
 	//""" Initialize to default text direction (for romance languages) """
-	displaymode =  LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
+	var displaymode =  LCD_ENTRYLEFT | LCD_ENTRYSHIFTDECREMENT;
 	write4bits(LCD_ENTRYMODESET | displaymode); //  set the entry mode
 
     clear();
@@ -183,10 +193,14 @@ function CharLCD(pin_rs, pin_e, pins_db){
 		write4bits(LCD_ENTRYMODESET | displaymode);
 	}
 		
-	function write4bits(bits){
+	function write4bits(bits, char_mode){
+	    if(typeof char_mode == 'undefined') char_mode = false;
 		delayMicroseconds(1000); // 1000 microsecond sleep
+		
+		//I'm not sure about this... need to test the equivalent code in python
+		console.log(zeroFill(bits.toString(2), 8));
 		bits = zeroFill(bits.toString(2).substring(2, bits.toString().length - 2), 8);
-		console.log(bits);
+		//console.log(bits);
 	};	
 	
 	function delayMicroseconds(ms){
@@ -202,8 +216,47 @@ function CharLCD(pin_rs, pin_e, pins_db){
 		delayMicroseconds(1);
 	};
 	
+	function message(text){
+		for(i = 0; i < text.length; i++){
+			if(text[0] === '\n'){
+				write4bits(0xC0); // next line
+			}
+			else{
+				write4bits(ord(char),true)
+			}
+		}
+	};
+	
 	function zeroFill(num, places) {
 	  var zero = places - num.toString().length + 1;
 	  return Array(+(zero > 0 && zero)).join("0") + num;
 	};
+	
+	function ord (string) {
+	  // http://kevin.vanzonneveld.net
+	  // +   original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+	  // +   bugfixed by: Onno Marsman
+	  // +   improved by: Brett Zamir (http://brett-zamir.me)
+	  // +   input by: incidence
+	  // *     example 1: ord('K');
+	  // *     returns 1: 75
+	  // *     example 2: ord('\uD800\uDC00'); // surrogate pair to create a single Unicode character
+	  // *     returns 2: 65536
+	  var str = string + '',
+		code = str.charCodeAt(0);
+	  if (0xD800 <= code && code <= 0xDBFF) { // High surrogate (could change last hex to 0xDB7F to treat high private surrogates as single characters)
+		var hi = code;
+		if (str.length === 1) {
+		  return code; // This is just a high surrogate with no following low surrogate, so we return its value;
+		  // we could also throw an error as it is not a complete character, but someone may want to know
+		}
+		var low = str.charCodeAt(1);
+		return ((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000;
+	  }
+	  if (0xDC00 <= code && code <= 0xDFFF) { // Low surrogate
+		return code; // This is just a low surrogate with no preceding high surrogate, so we return its value;
+		// we could also throw an error as it is not a complete character, but someone may want to know
+	  }
+	  return code;
+	}
 };

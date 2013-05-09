@@ -3,10 +3,14 @@
 def write4bits(bits):
 	bits=bin(bits)[2:].zfill(8)
 	print bits
-
-write4bits(0x33) 
-write4bits(0x32) 
-write4bits(0x28) 
-write4bits(0x0C) 
-write4bits(0x06) 
+	
+	
+write4bits(0x01) 
+write4bits(0x02) 
+write4bits(0x04) 
+write4bits(0x08) 
+write4bits(0x10) 
+write4bits(0x20) 
+write4bits(0x40) 
+write4bits(0x80) 
 
