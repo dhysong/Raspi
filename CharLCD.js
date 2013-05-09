@@ -1,3 +1,12 @@
+/*
+* based on code from Adafruit
+* https://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code/blob/master/Adafruit_CharLCD/Adafruit_CharLCD.py
+*
+* which was based on code from lrvick and LiquidCrystal
+* lrvic - https://github.com/lrvick/raspi-hd44780/blob/master/hd44780.py
+* LiquidCrystal - https://github.com/arduino/Arduino/blob/master/libraries/LiquidCrystal/LiquidCrystal.cpp
+*/
+
 var sleep = require('sleep');
 var GPIO = require("gpio");
 
