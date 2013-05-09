@@ -172,11 +172,34 @@ function CharLCD(pin_rs, pin_e, pins_db){
 	    if(typeof char_mode == 'undefined') char_mode = false;
 		delayMicroseconds(1000); // 1000 microsecond sleep
 		
-		//I'm not sure about this... need to test the equivalent code in python
-		console.log(zeroFill(bits.toString(2), 8));
-		bits = zeroFill(bits.toString(2).substring(2, bits.toString().length - 2), 8);
-		//console.log(bits);
-		gpio25.set(char_mode);
+		bits = zeroFill(bits.toString(2), 8);
+		
+		var pinValue = char_mode ? 1 : 0;
+		gpio25.set(pinValue);
+		
+		for(i=0; i < gpioPins.length; i++){
+			gpioPins[i].set(0);
+		}	
+		
+		for(i=0; i<4; i++){
+			if(bits[i].toString() == '1'){
+				gpioPins[3 - i].set(1);
+			}
+		}
+		
+		pulseEnable();
+		
+		for(i=0; i < gpioPins.length; i++){
+			gpioPins[i].set(0);
+		}		
+		
+		for(i=4; i<8; i++){
+			if(bits[i].toString() == '1'){
+				gpioPins[7 - i].set(1);
+			}
+		}
+		
+		pulseEnable();
 	};	
 	
 	function delayMicroseconds(ms){
@@ -184,11 +207,11 @@ function CharLCD(pin_rs, pin_e, pins_db){
 	};
 	
 	function pulseEnable(){
-	
+		gpio24.set(0);
 		delayMicroseconds(1);
-	
+		gpio24.set(1);	
 		delayMicroseconds(1);
-	
+		gpio24.set(0);	
 		delayMicroseconds(1);
 	};
 	
@@ -235,4 +258,6 @@ function CharLCD(pin_rs, pin_e, pins_db){
 	  }
 	  return code;
 	}
+	
+	return {Begin: begin, Message: message, Clear: clear};
 };
