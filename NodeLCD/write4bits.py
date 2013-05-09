@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-def write4bits(self, bits, char_mode=False):
+def write4bits(bits):
 	bits=bin(bits)[2:].zfill(8)
 	print bits
 
