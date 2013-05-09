@@ -1,7 +1,10 @@
 var charLCD = require('CharLCD');
 console.log(charLCD);
 
-/*charLCD.Begin(16,1);
-charLCD.Clear();
+var lcd = charLCD.Setup();
+console.log(lcd);
+lcd.Begin(16,1);
+lcd.Clear();
 lcd.Message('Hello World');
-lcd.Message('Hello Drew');*/
+lcd.Message('Hello Drew');
+
