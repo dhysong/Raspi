@@ -7,10 +7,10 @@
 * LiquidCrystal - https://github.com/arduino/Arduino/blob/master/libraries/LiquidCrystal/LiquidCrystal.cpp
 */
 
-/*
+
 var sleep = require('sleep');
 var GPIO = require("gpio");
-*/
+
 
 function CharLCD(pin_rs, pin_e, pins_db){
     pin_rs = typeof pin_rs !== 'undefined' ? pin_rs : 25;
@@ -26,15 +26,6 @@ function CharLCD(pin_rs, pin_e, pins_db){
     var LCD_FUNCTIONSET = 0x20;
     var LCD_SETCGRAMADDR = 0x40;
     var LCD_SETDDRAMADDR = 0x80;
-	
-	write4bits(0x01); 
-	write4bits(0x02); 
-	write4bits(0x04); 
-	write4bits(0x08); 
-	write4bits(0x10); 
-	write4bits(0x20); 
-	write4bits(0x40); 
-	write4bits(0x80); 
      
     // flags for display entry mode
     var LCD_ENTRYRIGHT = 0x00;
@@ -68,33 +59,17 @@ function CharLCD(pin_rs, pin_e, pins_db){
     var LCD_5x10DOTS = 0x04;
     var LCD_5x8DOTS = 0x00;
 		
-	/*
-	var gpio24 = GPIO.export(pin_e, {
-		direction: 'out',
-		interval: 200,
-		ready: function(){
 		
-		}
-	});	
+	/* Set the pins to out... make sure we're using the broadcom chip configuration*/
 	
-	var gpio25 = GPIO.export(pin_rs, {
-		direction: 'out',
-		interval: 200,
-		ready: function(){
-		
-		}
-	});
+	var gpio24 = GPIO.export(pin_e, {direction: 'out'});
 	
+	var gpio25 = GPIO.export(pin_rs, {direction: 'out'});
+	
+	var gpioPins = new Array();
 	for(i=0; i < pins_db.length; i++){
-		GPIO.export(pins_db[i], {
-			direction: 'out',
-			interval: 200,
-			ready: function(){
-			
-			}
-		});
-	}
-	*/
+		gpioPins[i] = GPIO.export(pins_db[i], {direction: 'out'});
+	}	
 
 	write4bits(0x33); // initialization
 	write4bits(0x32); // initialization
@@ -201,10 +176,11 @@ function CharLCD(pin_rs, pin_e, pins_db){
 		console.log(zeroFill(bits.toString(2), 8));
 		bits = zeroFill(bits.toString(2).substring(2, bits.toString().length - 2), 8);
 		//console.log(bits);
+		gpio25.set(char_mode);
 	};	
 	
 	function delayMicroseconds(ms){
-		//sleep.usleep(ms);
+		sleep.usleep(ms);
 	};
 	
 	function pulseEnable(){

@@ -14,3 +14,6 @@ write4bits(0x20)
 write4bits(0x40) 
 write4bits(0x80) 
 
+temp = list(range(4))
+print temp[::-1] 
+
