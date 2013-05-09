@@ -14,6 +14,8 @@ write4bits(0x20)
 write4bits(0x40) 
 write4bits(0x80) 
 
-temp = list(range(4))
-print temp[::-1] 
+
+pins_db=[23, 17, 21, 22]
+for i in range(4,8):
+	print pins_db[::-1][i-4]
 
