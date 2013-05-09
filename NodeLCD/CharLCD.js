@@ -7,8 +7,10 @@
 * LiquidCrystal - https://github.com/arduino/Arduino/blob/master/libraries/LiquidCrystal/LiquidCrystal.cpp
 */
 
+/*
 var sleep = require('sleep');
 var GPIO = require("gpio");
+*/
 
 function CharLCD(pin_rs, pin_e, pins_db){
     pin_rs = typeof pin_rs !== 'undefined' ? pin_rs : 25;
@@ -56,6 +58,7 @@ function CharLCD(pin_rs, pin_e, pins_db){
     var LCD_5x10DOTS = 0x04;
     var LCD_5x8DOTS = 0x00;
 		
+	/*
 	var gpio24 = GPIO.export(pin_e, {
 		direction: 'out',
 		interval: 200,
@@ -81,6 +84,7 @@ function CharLCD(pin_rs, pin_e, pins_db){
 			}
 		});
 	}
+	*/
 
 	write4bits(0x33); // initialization
 	write4bits(0x32); // initialization
@@ -181,11 +185,25 @@ function CharLCD(pin_rs, pin_e, pins_db){
 		
 	function write4bits(bits){
 		delayMicroseconds(1000); // 1000 microsecond sleep
-		bits = bits.toString(2);
+		bits = zeroFill(bits.toString(2).substring(2, bits.toString().length - 2), 8);
 		console.log(bits);
 	};	
+	
+	function delayMicroseconds(ms){
+		//sleep.usleep(ms);
+	};
+	
+	function pulseEnable(){
+	
+		delayMicroseconds(1);
+	
+		delayMicroseconds(1);
+	
+		delayMicroseconds(1);
+	};
+	
+	function zeroFill(num, places) {
+	  var zero = places - num.toString().length + 1;
+	  return Array(+(zero > 0 && zero)).join("0") + num;
+	};
 };
-
-CharLCD.prototype = function(){
-	return {};
-}();
